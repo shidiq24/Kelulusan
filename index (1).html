@@ -1,0 +1,161 @@
+
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Pengumuman Kelulusan - SMP Negeri 1 Umbulsari</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      background: #f0f4f8;
+      padding: 2rem;
+    }
+    .container {
+      max-width: 700px;
+      margin: auto;
+      background: #fff;
+      padding: 2rem;
+      border-radius: 1rem;
+      box-shadow: 0 0 10px rgba(0,0,0,0.1);
+    }
+    .hidden { display: none; }
+    .logo { width: 100px; }
+    input, select {
+      padding: 0.5rem;
+      margin: 0.5rem 0;
+      width: 100%;
+    }
+    button {
+      padding: 0.5rem 1rem;
+      margin-top: 1rem;
+      background-color: #1d3557;
+      color: #fff;
+      border: none;
+      border-radius: 5px;
+      cursor: pointer;
+    }
+    h1, h2, h3 {
+      text-align: center;
+    }
+    .result-card {
+      border: 1px solid #ccc;
+      padding: 1rem;
+      margin-top: 1rem;
+      border-radius: 0.5rem;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/5/59/Logo_SMP.png/240px-Logo_SMP.png" class="logo" />
+    <h1>SMP Negeri 1 Umbulsari</h1>
+    <h2>Pengumuman Kelulusan</h2>
+    <div id="countdown"></div>
+
+    <!-- Form Cek Siswa -->
+    <div id="formCekWrapper">
+      <form id="formCek">
+        <input type="text" id="nis" placeholder="Masukkan NIS" required /><br />
+        <input type="text" id="nisn" placeholder="Masukkan NISN" required /><br />
+        <button type="submit">Cek Hasil</button>
+      </form>
+      <div class="result-card hidden" id="resultCard">
+        <h3>Status: <span id="statusLulus">-</span></h3>
+        <p>Nama: <span id="namaSiswa">-</span></p>
+        <p>NIS: <span id="nisSiswa">-</span></p>
+        <p>NISN: <span id="nisnSiswa">-</span></p>
+        <p>Kelas: <span id="kelasSiswa">-</span></p>
+      </div>
+    </div>
+
+    <!-- Login Admin -->
+    <div id="adminLoginWrapper">
+      <h3>Login Admin</h3>
+      <input type="password" id="adminPassword" placeholder="Masukkan Password" />
+      <button onclick="loginAdmin()">Login</button>
+    </div>
+
+    <!-- Panel Admin -->
+    <div id="adminPanel" class="hidden">
+      <h3>Panel Admin</h3>
+      <button onclick="logoutAdmin()">Logout</button><br />
+      <label>Ubah Tahun Pelajaran:</label>
+      <input type="text" id="tahunPelajaran" value="2024/2025" /><br />
+      <label>Ubah Countdown (YYYY-MM-DD HH:MM):</label>
+      <input type="text" id="ubahCountdown" /><br />
+      <label>Ubah Logo (link gambar):</label>
+      <input type="text" id="ubahLogo" /><br />
+      <button onclick="simpanPengaturan()">Simpan Pengaturan</button>
+    </div>
+  </div>
+
+  <script>
+    let siswa = [
+      { nis: "12345", nisn: "67890", nama: "Budi", kelas: "9A", status: "LULUS" }
+    ];
+    let passwordAdmin = "admin123";
+
+    // Cek hasil
+    document.getElementById("formCek").addEventListener("submit", function(e) {
+      e.preventDefault();
+      const nis = document.getElementById("nis").value;
+      const nisn = document.getElementById("nisn").value;
+      const s = siswa.find(s => s.nis === nis && s.nisn === nisn);
+      const card = document.getElementById("resultCard");
+      if (s) {
+        document.getElementById("statusLulus").innerText = s.status;
+        document.getElementById("namaSiswa").innerText = s.nama;
+        document.getElementById("nisSiswa").innerText = s.nis;
+        document.getElementById("nisnSiswa").innerText = s.nisn;
+        document.getElementById("kelasSiswa").innerText = s.kelas;
+        card.classList.remove("hidden");
+      } else {
+        alert("Data tidak ditemukan!");
+        card.classList.add("hidden");
+      }
+    });
+
+    // Countdown
+    const targetDate = new Date("2025-06-10T08:00:00").getTime();
+    const countdownEl = document.getElementById("countdown");
+    const cekForm = document.getElementById("formCekWrapper");
+    const interval = setInterval(() => {
+      const now = new Date().getTime();
+      const selisih = targetDate - now;
+      if (selisih < 0) {
+        clearInterval(interval);
+        countdownEl.innerHTML = "";
+        cekForm.style.display = "block";
+        return;
+      }
+      const hari = Math.floor(selisih / (1000 * 60 * 60 * 24));
+      const jam = Math.floor((selisih % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
+      const menit = Math.floor((selisih % (1000 * 60 * 60)) / (1000 * 60));
+      const detik = Math.floor((selisih % (1000 * 60)) / 1000);
+      countdownEl.innerHTML = `Pengumuman dapat diakses dalam ${hari}h ${jam}j ${menit}m ${detik}d`;
+      cekForm.style.display = "none";
+    }, 1000);
+
+    // Admin Login
+    function loginAdmin() {
+      const pass = document.getElementById("adminPassword").value;
+      if (pass === passwordAdmin) {
+        document.getElementById("adminLoginWrapper").classList.add("hidden");
+        document.getElementById("adminPanel").classList.remove("hidden");
+      } else {
+        alert("Password salah!");
+      }
+    }
+
+    function logoutAdmin() {
+      document.getElementById("adminLoginWrapper").classList.remove("hidden");
+      document.getElementById("adminPanel").classList.add("hidden");
+    }
+
+    function simpanPengaturan() {
+      alert("Pengaturan disimpan (simulasi)");
+    }
+  </script>
+</body>
+</html>
